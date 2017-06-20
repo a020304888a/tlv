@@ -3,15 +3,18 @@
 
 int main()
 {
+	tlv_uint8 ret;
 	int i;
-	uint_16 size;
-	tlvs tlv[10] = {0};
-	uint_8 buff[1024] = {0};
-	uint_8 data[2];
+	tlv_uint16 size;
+	tlvs tlv[10];
+	tlv_uint8 buff[1024] = {0};
+	tlv_uint8 data[2];
 	data[0] = 0xda;
 	data[1] = 0x12;
 
+	tlv_uint8 tmpdata[2];
 	tlvs fetch;
+	fetch.value = tmpdata;
 
 	for(i = 0;i < 10;i ++){
 		tlv[i].type = i;
@@ -24,15 +27,19 @@ int main()
 	}
 	tlv_array_delete(buff, &size, 3);
 	tlv_array_show_all(buff, &size);
-	tlv_array_fetch(buff, &size, 8, &fetch);
+	ret = tlv_array_fetch(buff, &size, 8, &fetch);
 
-	printf("\n======= main =======\n");
-	printf("%02x\t", fetch.type);
-	printf("%02x", (uint_8)(fetch.length >> 8));
-	printf("%02x\t", (uint_8)fetch.length);
-	printf("%02x", (uint_8)fetch.value[0]);
-	printf("%02x", (uint_8)fetch.value[1]);
-	printf("\n");
+	if(ret) {
+		printf("fetch fail!\n");
+	} else {
+		printf("\n======= main =======\n");
+		printf("%02x\t", fetch.type);
+		printf("%02x", (tlv_uint8)(fetch.length >> 8));
+		printf("%02x\t", (tlv_uint8)fetch.length);
+		printf("%02x", (tlv_uint8)fetch.value[0]);
+		printf("%02x", (tlv_uint8)fetch.value[1]);
+		printf("\n");
+	}
 
 	return 0;
 }

@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <string.h>
+#include "tlv_typedef.h"
 #include "tlv.h"
 
 #define d_sizeof_uint8_uint16 	(3)
 
-uint_8 tlv_array_append(uint_8 *buff, uint_16 maxsize, uint_16 *buffsize, const tlvs *tlv)
+tlv_uint8 tlv_array_append(tlv_uint8 *buff, tlv_uint16 maxsize, tlv_uint16 *buffsize, const tlvs *tlv)
 {
-	uint_16 offset = 0;
-	uint_16 currsize = *buffsize;
+	tlv_uint16 offset = 0;
+	tlv_uint16 currsize = *buffsize;
 
 	if(maxsize < currsize + tlv->length)
 		return d_tlv_shortage_of_buffer;
@@ -22,8 +23,8 @@ uint_8 tlv_array_append(uint_8 *buff, uint_16 maxsize, uint_16 *buffsize, const 
 
 	//not found
 	buff[currsize ++] = tlv->type;
-	buff[currsize ++] = (uint_8)(tlv->length >> 8);
-	buff[currsize ++] = (uint_8)tlv->length;
+	buff[currsize ++] = (tlv_uint8)(tlv->length >> 8);
+	buff[currsize ++] = (tlv_uint8)tlv->length;
 	memcpy(&buff[currsize], tlv->value, tlv->length);
 	currsize += tlv->length;
 	*buffsize = currsize;
@@ -33,9 +34,9 @@ uint_8 tlv_array_append(uint_8 *buff, uint_16 maxsize, uint_16 *buffsize, const 
 
 
 /* this function do not allocate memory for tlv value, please assign in advance */
-uint_8 tlv_array_fetch(uint_8 *buff, const uint_16 *buffsize, uint_8 type, tlvs *tlv)
+tlv_uint8 tlv_array_fetch(tlv_uint8 *buff, const tlv_uint16 *buffsize, tlv_uint8 type, tlvs *tlv)
 {
-	uint_16 offset = 0;
+	tlv_uint16 offset = 0;
 
 	while(offset < *buffsize) {
 		//found
@@ -54,11 +55,11 @@ uint_8 tlv_array_fetch(uint_8 *buff, const uint_16 *buffsize, uint_8 type, tlvs 
 	return d_tlv_type_not_found;
 }
 
-uint_8 tlv_array_delete(uint_8 *buff, uint_16 *buffsize, uint_8 type)
+tlv_uint8 tlv_array_delete(tlv_uint8 *buff, tlv_uint16 *buffsize, tlv_uint8 type)
 {
-	uint_16 offset = 0;
-	uint_16 currsize = *buffsize;
-	uint_16 blocksize = 0;
+	tlv_uint16 offset = 0;
+	tlv_uint16 currsize = *buffsize;
+	tlv_uint16 blocksize = 0;
 
 	while(offset < currsize) {
 
@@ -78,12 +79,12 @@ uint_8 tlv_array_delete(uint_8 *buff, uint_16 *buffsize, uint_8 type)
 	return d_tlv_type_not_found;
 }
 
-uint_8 tlv_array_show_all(uint_8 *buff, const uint_16 *buffsize)
+tlv_uint8 tlv_array_show_all(tlv_uint8 *buff, const tlv_uint16 *buffsize)
 {
 	int i = 0;
-	uint_16 offset = 0;
-	uint_16 currsize = *buffsize;
-	uint_16 length = 0;
+	tlv_uint16 offset = 0;
+	tlv_uint16 currsize = *buffsize;
+	tlv_uint16 length = 0;
 
 	printf("Type\tLength\tValue\n");
 
