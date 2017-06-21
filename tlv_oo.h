@@ -1,17 +1,55 @@
-#ifndef TLV_OO_H
-#define TLV_OO_H
+#ifndef _TLV_OO_H
+#define _TLV_OO_H
 
-#include "tlv_typedef.h"
+#define d_tlv_ok					0x00
+#define d_tlv_shortage_of_buffer	0x01
+#define d_tlv_type_not_found		0x02
+#define d_tlv_append_found_type		0x03
+#define d_tlv_malloc_fail			0x04
 
-typedef struct _tlvs {
-	tlv_uint8 type;
-	tlv_uint16 length;
-	tlv_uint8 *value;
-} tlvs;
 
-tlv_uint8 tlv_array_append(tlv_uint8 *buff, tlv_uint16 maxsize, tlv_uint16 *buffsize, const tlvs *tlv);
-tlv_uint8 tlv_array_fetch(tlv_uint8 *buff, const tlv_uint16 *buffsize, tlv_uint8 type, tlvs *tlv);
-tlv_uint8 tlv_array_delete(tlv_uint8 *buff, tlv_uint16 *buffsize, tlv_uint8 type);
-tlv_uint8 tlv_array_show_all(tlv_uint8 *buff, const tlv_uint16 *buffsize);
+typedef struct TLV *tlv_p;
+
+typedef struct __TLV_TOKEN__ {
+	uint8_t type;
+	uint8_t length; // 256 bytes
+	uint8_t *value; // allocat by user
+} TLV_TOKEN;
+
+extern struct __TLV_API__ {
+	/**
+	 *
+	 */
+	tlv_p (*create)();
+	
+	/**
+	 *
+	 */
+	uint8_t (*append)(tlv_p tlv, const TLV_TOKEN *tlv_token);
+	
+	/**
+	 *
+	 */
+	uint8_t (*fetch)(tlv_p tlv, TLV_TOKEN *tlv_token);
+	
+	/**
+	 *
+	 */
+	uint8_t (*delete)(tlv_p tlv, uint8_t type);
+	
+	/**
+	 *
+	 */
+	void (*finish)(tlv_p tlv);
+
+	/** 
+	 * get tlv array 
+	 * return length
+	 * allocate uint8_t *out by user
+	 */
+	uint32_t (*get_array)(tlv_p tlv, uint8_t *out);
+
+
+} TLV;
 
 #endif

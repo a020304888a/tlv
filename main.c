@@ -3,16 +3,16 @@
 
 int main()
 {
-	tlv_uint8 ret;
+	uint8_t ret;
 	int i;
-	tlv_uint16 size;
+	uint16_t size;
 	tlvs tlv[10];
-	tlv_uint8 buff[1024] = {0};
-	tlv_uint8 data[2];
+	uint8_t buff[1024] = {0};
+	uint8_t data[2];
 	data[0] = 0xda;
 	data[1] = 0x12;
 
-	tlv_uint8 tmpdata[2];
+	uint8_t tmpdata[2];
 	tlvs fetch;
 	fetch.value = tmpdata;
 
@@ -34,10 +34,10 @@ int main()
 	} else {
 		printf("\n======= main =======\n");
 		printf("%02x\t", fetch.type);
-		printf("%02x", (tlv_uint8)(fetch.length >> 8));
-		printf("%02x\t", (tlv_uint8)fetch.length);
-		printf("%02x", (tlv_uint8)fetch.value[0]);
-		printf("%02x", (tlv_uint8)fetch.value[1]);
+		printf("%02x", (uint8_t)(fetch.length >> 8));
+		printf("%02x\t", (uint8_t)fetch.length);
+		printf("%02x", (uint8_t)fetch.value[0]);
+		printf("%02x", (uint8_t)fetch.value[1]);
 		printf("\n");
 	}
 

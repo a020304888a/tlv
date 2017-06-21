@@ -4,14 +4,14 @@
 #include "tlv_typedef.h"
 
 typedef struct _tlvs {
-	tlv_uint8 type;
-	tlv_uint16 length;
-	tlv_uint8 *value;
+	uint8_t type;
+	uint16_t length;
+	uint8_t *value;
 } tlvs;
 
-tlv_uint8 tlv_array_append(tlv_uint8 *buff, tlv_uint16 maxsize, tlv_uint16 *buffsize, const tlvs *tlv);
-tlv_uint8 tlv_array_fetch(tlv_uint8 *buff, const tlv_uint16 *buffsize, tlv_uint8 type, tlvs *tlv);
-tlv_uint8 tlv_array_delete(tlv_uint8 *buff, tlv_uint16 *buffsize, tlv_uint8 type);
-tlv_uint8 tlv_array_show_all(tlv_uint8 *buff, const tlv_uint16 *buffsize);
+uint8_t tlv_array_append(uint8_t *buff, uint16_t maxsize, uint16_t *buffsize, const tlvs *tlv);
+uint8_t tlv_array_fetch(uint8_t *buff, const uint16_t *buffsize, uint8_t type, tlvs *tlv);
+uint8_t tlv_array_delete(uint8_t *buff, uint16_t *buffsize, uint8_t type);
+uint8_t tlv_array_show_all(uint8_t *buff, const uint16_t *buffsize);
 
 #endif
