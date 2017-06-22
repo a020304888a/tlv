@@ -79,9 +79,9 @@ static uint8_t tlv_fetch(tlv_p tlv, TLV_TOKEN *tlv_token)
 
 static uint8_t tlv_delete(tlv_p tlv, uint8_t type)
 {
-	struct tlv_node *curr, *prev;
+	struct tlv_node *curr = tlv->head, *prev = NULL;
 
-	for(curr = tlv->head;curr != NULL;curr = curr->next) {
+	while(curr != NULL) {
 		if(curr->type == type) {
 			prev->next = curr->next;
 
@@ -91,6 +91,7 @@ static uint8_t tlv_delete(tlv_p tlv, uint8_t type)
 			free(curr);
 			return d_tlv_ok;
 		}
+		curr = curr->next;
 		prev = curr;
 	}
 
@@ -99,13 +100,15 @@ static uint8_t tlv_delete(tlv_p tlv, uint8_t type)
 
 static void tlv_finish(tlv_p tlv)
 {
-	struct tlv_node *curr;
+	struct tlv_node *curr = tlv->head, *next = NULL;
 
-	for(;tlv->head != NULL;) {
-		curr = tlv->head;
-		tlv->head = tlv->head->next;
+	while(curr != NULL) {
+		next = curr->next;
 		free(curr);
+		curr = next;
 	}
+
+	free(tlv);
 }
 
 static uint32_t tlv_get_array(tlv_p tlv, uint32_t length, uint8_t *out)
@@ -122,11 +125,11 @@ static uint32_t tlv_get_array(tlv_p tlv, uint32_t length, uint8_t *out)
 		ret += curr->length;
 	}
 
-	return ret;
+	return tlv->total_length;
 }
 
 /* API gateway */
-struct __TLV_API__ TLV {
+struct __TLV_API__ TLV = {
 	.create = tlv_create,
 	.append = tlv_append,
 	.fetch = tlv_fetch,

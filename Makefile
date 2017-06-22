@@ -6,7 +6,7 @@
 #
 
 CC := gcc
-CFLAGS := -Wall -O0 -std=gnu99
+CFLAGS := -std=gnu99 -Wall -O2 -g -I .
 #CFLAGS += -Werror
 CFLAGS += -fstack-protector
 LIBS :=

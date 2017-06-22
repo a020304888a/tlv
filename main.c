@@ -21,11 +21,36 @@ int main()
 	tlv_p mytlv = TLV.create();
 
 	token.value[0] = 0x0f;
-	token.length = 0x01;
+	token.value[1] = 0x01;
+	token.length = 0x02;
 	/* append */
 	TLV.append(mytlv, &token);
+	token.type = 1;
+	TLV.append(mytlv, &token);
+	token.type = 2;
+	TLV.append(mytlv, &token);
+	token.type = 3;
+	token.value[1] = 0xdd;
+	token.length = 0x03;
+	TLV.append(mytlv, &token);
 
+	length = TLV.get_array(mytlv, 2048, tlv_array);
+	printf("tlv_array = ");
+	for(int i = 0;i < length;i ++)
+		printf("%02x", tlv_array[i]);
 
+	printf("\n");
+
+	ret = TLV.delete(mytlv, 2);
+	printf("ret = %02x\n", ret);
+	length = TLV.get_array(mytlv, 2048, tlv_array);
+	printf("tlv_array = ");
+	for(int i = 0;i < length;i ++)
+		printf("%02x", tlv_array[i]);
+
+	printf("\n");
+
+	TLV.finish(mytlv);
 
 	return 0;
 }
