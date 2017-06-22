@@ -1,6 +1,8 @@
 #ifndef _TLV_OO_H
 #define _TLV_OO_H
 
+#include <stdint.h>
+
 #define d_tlv_ok					0x00
 #define d_tlv_shortage_of_buffer	0x01
 #define d_tlv_type_not_found		0x02
@@ -47,7 +49,7 @@ extern struct __TLV_API__ {
 	 * return length
 	 * allocate uint8_t *out by user
 	 */
-	uint32_t (*get_array)(tlv_p tlv, uint8_t *out);
+	uint32_t (*get_array)(tlv_p tlv, uint32_t length, uint8_t *out);
 
 
 } TLV;

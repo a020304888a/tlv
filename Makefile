@@ -6,14 +6,18 @@
 #
 
 CC := gcc
-CFLAGS := -Wall -Werror -O0 -std=c99
+CFLAGS := -Wall -O0 -std=gnu99
+#CFLAGS += -Werror
 CFLAGS += -fstack-protector
 LIBS :=
 
 
 TARGET := main
 
-OBJS := main.o tlv.o
+#C_SRCS := $(wildcard *.c)
+#OBJS := ${C_SRCS:.c=.o}
+
+OBJS := main.o tlv_oo.o
 
 .SUFFIXS: .c .o
 
