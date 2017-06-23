@@ -14,7 +14,7 @@ typedef struct TLV *tlv_p;
 
 typedef struct __TLV_TOKEN__ {
 	uint8_t type;
-	uint8_t length; // 256 bytes
+	uint8_t length; // 0~255 bytes
 	uint8_t *value; // allocat by user
 } TLV_TOKEN;
 

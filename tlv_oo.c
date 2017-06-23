@@ -13,7 +13,6 @@ struct tlv_node {
 
 struct TLV {
 	struct tlv_node *volatile head;
-	struct tlv_node *volatile tail;
 	uint8_t total_type;
 	uint32_t total_length;
 };
@@ -26,7 +25,6 @@ static tlv_p tlv_create()
 	}
 
 	tlv->head = NULL;
-	tlv->tail = NULL;
 	tlv->total_length = 0;
 	tlv->total_type = 0;
 	return tlv;
@@ -35,6 +33,8 @@ static tlv_p tlv_create()
 static uint8_t tlv_append(tlv_p tlv, const TLV_TOKEN *tlv_token)
 {
 	struct tlv_node *node = malloc(sizeof(*node) + (tlv_token->length * sizeof(uint8_t)));
+	struct tlv_node *curr = tlv->head, *prev = NULL;
+
 	if(node == NULL) {
 		return d_tlv_malloc_fail;
 	}
@@ -44,24 +44,35 @@ static uint8_t tlv_append(tlv_p tlv, const TLV_TOKEN *tlv_token)
 	node->length = tlv_token->length;
 	memcpy(node->value, tlv_token->value, tlv_token->length);
 
+	while(curr != NULL) {
+		if(curr->type == tlv_token->type) {
+			node->next = curr->next;
+			prev->next = node;
+			free(curr);
+			return d_tlv_ok;
+		}
+		prev = curr;
+		curr = curr->next;
+	}
+
 	if(tlv->head == NULL) {
+		/* First node */
 		tlv->head = node;
-		tlv->tail = node;
 	} else {
-		tlv->tail->next = node;
-		tlv->tail = node;
+		prev->next = node;
 	}
 
 	tlv->total_type ++;
 	tlv->total_length += tlv_token->length;
+
 	return d_tlv_ok;
 }
 
 static uint8_t tlv_fetch(tlv_p tlv, TLV_TOKEN *tlv_token)
 {
-	struct tlv_node *curr;
+	struct tlv_node *curr = tlv->head;
 
-	for(curr = tlv->head;curr != NULL;curr = curr->next) {
+	while(curr != NULL) {
 		if(curr->type == tlv_token->type) {
 			if(tlv_token->length >= curr->length) {
 				tlv_token->length = curr->length;
@@ -72,6 +83,7 @@ static uint8_t tlv_fetch(tlv_p tlv, TLV_TOKEN *tlv_token)
 			}
 			
 		}
+		curr = curr->next;
 	}
 	
 	return d_tlv_type_not_found;
@@ -83,16 +95,20 @@ static uint8_t tlv_delete(tlv_p tlv, uint8_t type)
 
 	while(curr != NULL) {
 		if(curr->type == type) {
-			prev->next = curr->next;
+			if(prev == NULL) {
+				/* First node */
+				tlv->head = curr->next;
+			} else {
+				prev->next = curr->next;
+			}
 
 			tlv->total_type --;
 			tlv->total_length -= curr->length;
-
 			free(curr);
 			return d_tlv_ok;
 		}
-		curr = curr->next;
 		prev = curr;
+		curr = curr->next;
 	}
 
 	return d_tlv_type_not_found;
@@ -121,11 +137,13 @@ static uint32_t tlv_get_array(tlv_p tlv, uint32_t length, uint8_t *out)
 	}
 
 	for(curr = tlv->head;curr != NULL;curr = curr->next) {
+		out[ret ++] = curr->type;
+		out[ret ++] = curr->length;
 		memcpy(out+ret, curr->value, curr->length);
 		ret += curr->length;
 	}
 
-	return tlv->total_length;
+	return ret;
 }
 
 /* API gateway */
